@@ -1,0 +1,13 @@
+.outerContainer {
+  height: 100vh;
+  background-color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.container {
+  background-color: #555;
+  height: 85%;
+  width: 75%;
+  display: flex;
+}

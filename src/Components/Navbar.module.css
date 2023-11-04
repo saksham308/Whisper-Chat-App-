@@ -1,0 +1,14 @@
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: last baseline;
+}
+.btn {
+  padding: 5px;
+  background-color: #444;
+  color: white;
+}
+.right {
+  display: flex;
+  gap: 10px;
+}

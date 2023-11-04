@@ -1,0 +1,14 @@
+.ChatPanel {
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+}
+.ChatPanel::-webkit-scrollbar {
+  display: none;
+}
+.outerContainer {
+  display: flex;
+  flex: 2;
+  flex-direction: column;
+  justify-content: space-between;
+}
