@@ -1,24 +1,21 @@
 import React from "react";
 import { useContext } from "react";
 import { UserContext } from "../Context/UserContextProvider";
+import styles from "./message.module.css";
 const Message = ({ sender, data }) => {
   const { currUser } = useContext(UserContext);
-  console.log(currUser.displayName === sender);
   return (
     <div
+      className={
+        sender == currUser.displayName ? styles.sender : styles.receiver
+      }
       style={{
-        backgroundColor: `${sender == currUser.displayName ? "red" : "blue"}`,
-        height: "auto",
-        padding: "7px",
-        borderRadius: "15px",
         alignSelf: `${
           sender == currUser.displayName ? "flex-start" : "flex-end"
         }`,
-        width: "auto",
-        margin: "5px",
       }}
     >
-      {data}
+      <p>{data}</p>
     </div>
   );
 };

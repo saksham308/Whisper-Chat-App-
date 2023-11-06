@@ -31,10 +31,32 @@ const InputPanel = () => {
   };
   return (
     <>
-      <div style={{ display: "flex" }}>
-        <form onSubmit={handleSubmit}>
-          <input type="text" />
-          <button type="submit">Submit</button>
+      <div style={{ width: "100%" }}>
+        <form
+          style={{
+            width: "100%",
+            display: "flex",
+            gap: "4px",
+            alignItems: "flex-start",
+          }}
+          onSubmit={handleSubmit}
+        >
+          <input
+            style={{ width: "92%", padding: "7px", fontSize: "15px" }}
+            type="text"
+            placeholder="Enter your message"
+          />
+          <label htmlFor="btn">
+            <img
+              width="32"
+              height="32"
+              src="https://img.icons8.com/dusk/64/paper-plane.png"
+              alt="paper-plane"
+            />
+          </label>
+          <button id="btn" style={{ display: "none" }} type="submit">
+            Submit
+          </button>
         </form>
       </div>
     </>

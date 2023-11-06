@@ -14,12 +14,15 @@ import { UserContext } from "../Context/UserContextProvider";
 const SearchBar = () => {
   const [username, setUsername] = useState("");
   const [users, setUsers] = useState(null);
-  const { currUser, setRoom, room } = useContext(UserContext);
+  const { currUser, setReceiver, receiver, setRoom, room } =
+    useContext(UserContext);
   const handleClick = async () => {
     const combinedId =
       currUser.uid > users.uid
         ? currUser.uid + users.uid
         : users.uid + currUser.uid;
+
+    console.log(receiver);
     const res = await getDoc(doc(db, "userChats", combinedId));
     if (!res.exists()) {
       try {
@@ -29,6 +32,7 @@ const SearchBar = () => {
       }
     }
     await setRoom(combinedId);
+    setReceiver(users);
     console.log(room);
   };
 

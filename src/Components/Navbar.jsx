@@ -5,16 +5,16 @@ import { useContext } from "react";
 import { UserContext } from "../Context/UserContextProvider";
 import styles from "./Navbar.module.css";
 const Navbar = () => {
-  const { currUser } = useContext(UserContext);
+  const { currUser, setRoom } = useContext(UserContext);
   const logout = async () => {
+    setRoom("");
     await signOut(auth);
-    console.log(room);
   };
   return (
     <>
       <div className={styles.container}>
         <div className={styles.left}>
-          <div>ChatApp</div>
+          <div>Whisper</div>
         </div>
         <div className={styles.right}>
           <span>{currUser.displayName}</span>

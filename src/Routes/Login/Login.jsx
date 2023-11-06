@@ -33,7 +33,7 @@ const Login = () => {
         />
         <input
           className={styles.login_input}
-          type="text"
+          type="password"
           placeholder="Password"
         />
         <button className={styles.login_button} type="submit">

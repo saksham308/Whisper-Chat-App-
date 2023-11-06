@@ -6,6 +6,7 @@ const UserContextProvider = ({ children }) => {
   let [theme, setTheme] = useState(false);
   const [room, setRoom] = useState("");
   const [currUser, setCurrUser] = useState({});
+  const [receiver, setReceiver] = useState(null);
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
       setCurrUser(user);
@@ -13,7 +14,17 @@ const UserContextProvider = ({ children }) => {
     return () => unsub();
   });
   return (
-    <UserContext.Provider value={{ theme, setTheme, currUser, room, setRoom }}>
+    <UserContext.Provider
+      value={{
+        theme,
+        setTheme,
+        currUser,
+        room,
+        setRoom,
+        receiver,
+        setReceiver,
+      }}
+    >
       {children}
     </UserContext.Provider>
   );

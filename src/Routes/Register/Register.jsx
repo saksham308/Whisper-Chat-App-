@@ -3,7 +3,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { auth, db, storage } from "../../Config/firebase_config";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { doc, setDoc } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  getDocs,
+  collection,
+  query,
+  where,
+} from "firebase/firestore";
 import styles from "./register.module.css";
 const Register = () => {
   const [error, setError] = useState("");
@@ -15,55 +22,77 @@ const Register = () => {
     const pass = e.target[2].value;
     const pass2 = e.target[3].value;
     const file = e.target[4].files[0];
-    console.log(file);
-    const isFilled = (...param) => {
-      return param.every((param) => param.trim() !== "");
-    };
-    if (pass != pass2) {
-      setError("Passwords don't match!!");
-      return;
-    }
-    if (!isFilled(username, email, pass, pass2)) {
-      setError("Fill all the fields");
-      return;
-    }
-    try {
-      const res = await createUserWithEmailAndPassword(auth, email, pass);
-      const storageRef = ref(storage, username);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-
-      uploadTask.on(
-        (error) => {
-          console.error(error);
-          setError(error.message); // Set an error message
-          // Handle error further if needed
-        },
-        async () => {
-          try {
-            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-            await updateProfile(res.user, {
-              displayName: username,
-              photoURL: downloadURL,
-            });
-            await setDoc(doc(db, "users", res.user.uid), {
-              uid: res.user.uid,
-              username,
-              email,
-              photoURL: downloadURL,
-            });
-            navigate("/");
-
-            setError("");
-          } catch (error) {
-            setError(error.message); // Handle error
-          }
+    const isValidated = async (username, email, pass, pass2) => {
+      try {
+        if (!username || !email || !pass || !pass2) {
+          setError("Please fill all the fields!!");
+          return false;
         }
-      );
-    } catch (err) {
-      console.error(err);
-      setError(err.message); // Handle error
-    }
+        if (pass != pass2) {
+          setError("Passwords don't match!!");
+          return false;
+        }
+
+        const q = query(
+          collection(db, "users"),
+          where("username", "==", username)
+        );
+        const querySnapshot = await getDocs(q);
+        if (querySnapshot.docs.length) {
+          setError(
+            "This username already exists!! Please enter a different username"
+          );
+          return false;
+        }
+
+        return true;
+      } catch (error) {
+        console.error("An error occurred:", error);
+        return false;
+      }
+    };
+
+    isValidated(username, email, pass, pass2)
+      .then((res) => {
+        res && createUser();
+      })
+      .catch((err) => {
+        setError(err);
+        return;
+      });
+    const createUser = async () => {
+      try {
+        const res = await createUserWithEmailAndPassword(auth, email, pass);
+        const storageRef = ref(storage, username);
+        await uploadBytesResumable(storageRef, file).then(() => {
+          getDownloadURL(storageRef).then(async (downloadURL) => {
+            try {
+              //Update profile
+              await updateProfile(res.user, {
+                displayName: username,
+                photoURL: downloadURL,
+              });
+              //create user on firestore
+              await setDoc(doc(db, "users", res.user.displayName), {
+                uid: res.user.uid,
+                username,
+                email,
+                photoURL: downloadURL,
+              });
+
+              navigate("/");
+            } catch (err) {
+              console.log(err);
+              setError(err.message);
+            }
+          });
+        });
+      } catch (err) {
+        setError(err.message);
+      }
+    };
   };
+
   return (
     <div className={styles.register_container}>
       <form className={styles.register_form} action="" onSubmit={handleSubmit}>
@@ -116,5 +145,4 @@ const Register = () => {
     </div>
   );
 };
-
 export default Register;
